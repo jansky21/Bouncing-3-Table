@@ -1,0 +1,200 @@
+import java.awt.*;
+import javax.swing.*;
+
+public class DoubleBuffer extends JFrame implements Runnable {
+
+
+    private int x = 0, x2 = 0, x3 = 0;
+    private int y = 0, y2 = 0, y3 = 0;
+
+
+    private static final long serialVersionUID = 276554887902992792L;
+
+    //Animation Object
+    private Rectangle box1;
+    private Rectangle box2;
+    private Rectangle box3;
+
+
+    //Timer
+    private long rstart;
+    private long rend;
+
+    //Thread Object
+    private Thread t;
+
+    //Screen dimension variables
+    private int screenWidth;
+    private int screenHeight;
+
+    //frame buffers
+    FrameBuffer buffer;
+
+
+    //Constructor
+    public DoubleBuffer(String title, int width, int height) {
+        super(title);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(width, height);
+
+        box1 = new Rectangle(100, 300, 100, 100);
+        box2 = new Rectangle(400, 200, 100, 100);
+        box3 = new Rectangle(200, 500, 100, 100);
+
+
+        screenWidth = width;
+        screenHeight = height;
+
+        //Instantiate thread using the class instance
+        t = new Thread(this);
+    }
+
+
+
+    @Override
+    public void run() {
+
+
+
+
+        //set the thread to run forever until stop() is called
+        while(true){
+            try {
+
+
+                if(x2 == 0) {
+                    box2.x = box2.x + 3;
+                } else {
+                    box2.x = box2.x - 3;
+                }
+
+                if(y2 == 0) {
+                    box2.y = box2.y + 3;
+                } else {
+                    box2.y = box2.y - 3;
+                }
+
+                if(box2.x >= screenWidth - box2.width) {
+                    x2 = 1;
+                }
+
+                if(box2.x <= 0) {
+                    x2 = 0;
+                }
+
+                if(box2.y >= screenHeight - box2.height) {
+                    y2 = 1;
+                }
+
+                if(box2.y <= 20) {
+                    y2 = 0;
+                }
+
+                if(x3 == 0) {
+                    box3.x = box3.x + 3;
+                } else {
+                    box3.x = box3.x - 3;
+                }
+
+                if(y3 == 0) {
+                    box3.y = box3.y + 3;
+                } else {
+                    box3.y = box3.y - 3;
+                }
+
+                if(box3.x >= screenWidth - box3.width) {
+                    x3 = 1;
+                }
+
+                if(box3.x <= 0) {
+                    x3 = 0;
+                }
+
+                if(box3.y >= screenHeight - box3.height) {
+                    y3 = 1;
+                }
+
+                if(box3.y <= 20) {
+                    y3 = 0;
+                }
+
+                if(x == 0) {
+                    box1.x = box1.x + 3;
+                } else {
+                    box1.x = box1.x - 3;
+                }
+
+                if(y == 0) {
+                    box1.y = box1.y + 3;
+                } else {
+                    box1.y = box1.y - 3;
+                }
+
+                if(box1.x >= screenWidth - box1.width) {
+                    x = 1;
+                }
+
+                if(box1.x <= 0) {
+                    x = 0;
+                }
+
+                if(box1.y >= screenHeight - box1.height) {
+                    y = 1;
+                }
+
+                if(box1.y <= 20) {
+                    y = 0;
+                }
+
+                //To maintain a 25 frame per second rendering,
+                //we let the thread sleep for 40 milliseconds.
+                //That is:
+                //1 second = 1000 milliseconds
+                //so we divide
+                //1000 milliseconds /25
+                //that give us 40 milliseconds window
+                //for every rendering
+
+                //we render after the thread sleep
+                rstart = System.currentTimeMillis();
+                repaint();
+                rend = System.currentTimeMillis();
+
+                //sleep for the remaining time
+                Thread.sleep(10-(rend-rstart));
+            } catch (InterruptedException ex) {
+                //Print errors
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+    public void paint(Graphics g) {
+        if(buffer == null)
+            buffer = new FrameBuffer(createImage(screenWidth,screenHeight), createImage(screenWidth, screenHeight));
+
+        Graphics2D g2d = (Graphics2D) g;
+        buffer.clear(createImage(screenWidth, screenHeight));
+        buffer.drawBox(box1, box2, box3);
+
+
+
+
+        g2d.drawImage(buffer.render(),0,0,this);
+        g2d.dispose();
+
+
+
+    }
+
+
+
+    public void startAnimation() {
+        t.start();
+    }
+
+    public static void main(String[] args) {
+        DoubleBuffer fr = new DoubleBuffer("Double Buffering Demo", 600,600);
+        fr.setVisible(true);
+        fr.startAnimation();
+    }
+}
