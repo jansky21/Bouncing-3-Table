@@ -21,15 +21,15 @@ public class FrameBuffer {
 
     public void drawBox(Rectangle box,Rectangle box2, Rectangle box3) {
         Graphics2D g = (Graphics2D) nextFrame.getGraphics();
-        g.setColor(Color.BLUE);
+        g.setColor(Color.PINK);
         g.fillRect((int)box.getX(), (int)box.getY(),
                 (int)box.getWidth(), (int)box.getHeight());
 
-        g.setColor(Color.YELLOW);
+        g.setColor(Color.GRAY);
         g.fillRect((int)box2.getX(), (int)box2.getY(),
                 (int)box2.getWidth(), (int)box2.getHeight());
 
-        g.setColor(Color.RED);
+        g.setColor(Color.GREEN);
         g.fillRect((int)box3.getX(), (int)box3.getY(),
                 (int)box3.getWidth(), (int)box3.getHeight());
         g.dispose();
